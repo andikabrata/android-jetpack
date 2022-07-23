@@ -1,9 +1,10 @@
-package com.lazday.news
+package com.lazday.news.ui.home
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.lazday.news.R
 import com.lazday.news.databinding.ActivityHomeBinding
 
 class HomeActivity : AppCompatActivity() {

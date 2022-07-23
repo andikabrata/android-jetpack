@@ -1,4 +1,4 @@
-package com.lazday.news
+package com.lazday.news.ui.detail
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

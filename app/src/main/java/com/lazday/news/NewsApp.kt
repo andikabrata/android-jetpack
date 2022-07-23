@@ -4,6 +4,10 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.lazday.news.core.network.networkModule
 import com.lazday.news.data.news.repositoryModule
+import com.lazday.news.ui.bookmark.bookmarkModule
+import com.lazday.news.ui.bookmark.bookmarkViewModel
+import com.lazday.news.ui.home.homeModule
+import com.lazday.news.ui.home.homeViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -21,7 +25,11 @@ class NewsApp : Application() {
             androidContext(this@NewsApp)
             modules(
                 networkModule,
-                repositoryModule
+                repositoryModule,
+                homeViewModel,
+                homeModule,
+                bookmarkViewModel,
+                bookmarkModule
             )
         }
     }
