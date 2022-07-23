@@ -1,4 +1,4 @@
-package com.lazday.news.data
+package com.lazday.news.data.news
 
 data class NewsModel(
     val status: String,

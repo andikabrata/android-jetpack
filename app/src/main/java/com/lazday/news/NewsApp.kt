@@ -3,6 +3,7 @@ package com.lazday.news
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.lazday.news.core.network.networkModule
+import com.lazday.news.data.news.repositoryModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -19,7 +20,8 @@ class NewsApp : Application() {
             androidLogger()
             androidContext(this@NewsApp)
             modules(
-                networkModule
+                networkModule,
+                repositoryModule
             )
         }
     }
