@@ -27,40 +27,6 @@ class HomeFragment : Fragment() {
     private lateinit var bindingToolbar: CustomToolbarBinding
     private val viewModel: HomeViewModel by viewModel()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
-        bindingToolbar = binding.toolbar
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        bindingToolbar.title = viewModel.title
-        binding.listCategory.adapter = categoryAdapter
-        binding.listNews.adapter = newsAdapter
-
-        viewModel.category.observe(viewLifecycleOwner, Observer {
-            Timber.e(it)
-        })
-
-        viewModel.news.observe(viewLifecycleOwner, Observer {
-            Timber.e(it.articles.toString())
-            binding.imageAlert.visibility = if (it.articles.isEmpty()) View.VISIBLE else View.GONE
-            binding.textAlert.visibility = if (it.articles.isEmpty()) View.VISIBLE else View.GONE
-            newsAdapter.add(it.articles)
-        })
-
-        viewModel.message.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-
     private val newsAdapter by lazy {
         NewsAdapter(arrayListOf(), object : NewsAdapter.OnAdapterListener {
             override fun onClick(article: ArticleModel) {
@@ -74,6 +40,46 @@ class HomeFragment : Fragment() {
         CategoryAdapter(viewModel.categories, object : CategoryAdapter.OnAdapterListener {
             override fun onClick(category: CategoryModel) {
                 viewModel.category.postValue(category.id)
+            }
+        })
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        bindingToolbar = binding.toolbar
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        bindingToolbar.title = viewModel.title
+        /**
+         * lifecycleOwner di gunakan untuk menginisialisasikan data binding untuk type yang berbentuk ViewModel
+         */
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
+        binding.listCategory.adapter = categoryAdapter
+        binding.listNews.adapter = newsAdapter
+
+        viewModel.category.observe(viewLifecycleOwner, Observer {
+            Timber.e(it)
+            viewModel.fetch()
+        })
+
+        viewModel.news.observe(viewLifecycleOwner, Observer {
+            Timber.e(it.articles.toString())
+            binding.imageAlert.visibility = if (it.articles.isEmpty()) View.VISIBLE else View.GONE
+            binding.textAlert.visibility = if (it.articles.isEmpty()) View.VISIBLE else View.GONE
+            newsAdapter.add(it.articles)
+        })
+
+        viewModel.message.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
         })
     }
