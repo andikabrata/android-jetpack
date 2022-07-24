@@ -3,10 +3,10 @@ package com.lazday.news.data.news
 data class NewsModel(
     val status: String,
     val totalResults: Int,
-    val articles: List<ArticlesModel>
+    val articles: List<ArticleModel>
 )
 
-data class ArticlesModel(
+data class ArticleModel(
     val source: SourceModel?,
     val author: String?,
     val title: String?,

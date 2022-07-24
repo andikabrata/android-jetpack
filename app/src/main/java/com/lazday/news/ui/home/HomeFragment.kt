@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.lazday.news.data.news.ArticleModel
 import com.lazday.news.data.news.CategoryModel
 import com.lazday.news.databinding.CustomToolbarBinding
 import com.lazday.news.databinding.FragmentHomeBinding
 import com.lazday.news.ui.news.CategoryAdapter
+import com.lazday.news.ui.news.NewsAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.dsl.module
 import timber.log.Timber
@@ -39,6 +41,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         bindingToolbar.textTitle.text = viewModel.title
         binding.listCategory.adapter = categoryAdapter
+        binding.listNews.adapter = newsAdapter
 
         viewModel.category.observe(viewLifecycleOwner, Observer {
             Timber.e(it)
@@ -46,6 +49,9 @@ class HomeFragment : Fragment() {
 
         viewModel.news.observe(viewLifecycleOwner, Observer {
             Timber.e(it.articles.toString())
+            binding.imageAlert.visibility = if (it.articles.isEmpty()) View.VISIBLE else View.GONE
+            binding.textAlert.visibility = if (it.articles.isEmpty()) View.VISIBLE else View.GONE
+            newsAdapter.add(it.articles)
         })
 
         viewModel.message.observe(viewLifecycleOwner, Observer {
@@ -55,12 +61,20 @@ class HomeFragment : Fragment() {
         })
     }
 
+    private val newsAdapter by lazy {
+        NewsAdapter(arrayListOf(), object : NewsAdapter.OnAdapterListener {
+            override fun onClick(article: ArticleModel) {
+
+            }
+
+        })
+    }
+
     private val categoryAdapter by lazy {
         CategoryAdapter(viewModel.categories, object : CategoryAdapter.OnAdapterListener {
             override fun onClick(category: CategoryModel) {
                 viewModel.category.postValue(category.id)
             }
-
         })
     }
 }
