@@ -39,7 +39,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bindingToolbar.textTitle.text = viewModel.title
+        bindingToolbar.title = viewModel.title
         binding.listCategory.adapter = categoryAdapter
         binding.listNews.adapter = newsAdapter
 
