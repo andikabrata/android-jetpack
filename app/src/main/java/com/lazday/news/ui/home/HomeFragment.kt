@@ -9,6 +9,7 @@ import com.lazday.news.databinding.CustomToolbarBinding
 import com.lazday.news.databinding.FragmentHomeBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.dsl.module
+import timber.log.Timber
 
 val homeModule = module {
     factory { HomeFragment() }
@@ -35,5 +36,6 @@ class HomeFragment : Fragment() {
 
 
         bindingToolbar.textTitle.text = viewModel.title
+        Timber.e(viewModel.categories.toString())
     }
 }
