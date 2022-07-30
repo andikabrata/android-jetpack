@@ -3,19 +3,22 @@ package com.lazday.news.ui.news
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.lazday.news.data.news.ArticleModel
 import com.lazday.news.databinding.AdapterNewsBinding
+import com.lazday.news.util.DateUtil
 
 class NewsAdapter(
     val articles: ArrayList<ArticleModel>,
     val listener: OnAdapterListener
 ) : RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
 
-    private val items = arrayListOf<TextView>()
-
-    class ViewHolder(val binding: AdapterNewsBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: AdapterNewsBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(article: ArticleModel) {
+            binding.article = article
+            binding.format = DateUtil()
+        }
+    }
 
     interface OnAdapterListener {
         fun onClick(article: ArticleModel)
@@ -29,8 +32,7 @@ class NewsAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val article = articles[position]
-        holder.binding.title.text = article.title
-        holder.binding.publishedAt.text = article.publishedAt
+        holder.bind(article)
         holder.itemView.setOnClickListener {
             listener.onClick(article)
         }
