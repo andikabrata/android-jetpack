@@ -33,7 +33,7 @@ class NewsRepository(
         db.save(articleModel)
     }
 
-    suspend fun remove(articleModel: ArticleModel){
+    suspend fun remove(articleModel: ArticleModel) {
         db.remove(articleModel)
     }
 }

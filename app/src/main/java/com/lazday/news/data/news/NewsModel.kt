@@ -15,13 +15,13 @@ data class NewsModel(
  */
 @Entity(tableName = "tableArticle")
 data class ArticleModel(
-    @PrimaryKey(autoGenerate = false)
     val source: SourceModel?,
     val author: String?,
     val title: String?,
     val description: String?,
     val url: String?,
     val urlToImage: String?,
+    @PrimaryKey(autoGenerate = false)
     val publishedAt: String,
     val content: String?
 ) : Serializable
