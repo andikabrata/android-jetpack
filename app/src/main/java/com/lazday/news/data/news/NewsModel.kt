@@ -1,5 +1,7 @@
 package com.lazday.news.data.news
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.io.Serializable
 
 data class NewsModel(
@@ -8,7 +10,12 @@ data class NewsModel(
     val articles: List<ArticleModel>
 )
 
+/**
+ * @Entity inisialisasi untuk membuat database Room
+ */
+@Entity(tableName = "tableArticle")
 data class ArticleModel(
+    @PrimaryKey(autoGenerate = false)
     val source: SourceModel?,
     val author: String?,
     val title: String?,
