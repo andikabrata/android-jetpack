@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.lazday.news.R
 import com.lazday.news.data.news.ArticleModel
 import com.lazday.news.data.news.CategoryModel
 import com.lazday.news.databinding.CustomToolbarBinding
@@ -28,6 +30,11 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var bindingToolbar: CustomToolbarBinding
     private val viewModel: HomeViewModel by viewModel()
+
+    private fun firstLoadData(){
+        binding.scroll.scrollTo(0, 0)
+        viewModel.fetch()
+    }
 
     private val newsAdapter by lazy {
         NewsAdapter(arrayListOf(), object : NewsAdapter.OnAdapterListener {
@@ -61,6 +68,25 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindingToolbar.title = viewModel.title
+        bindingToolbar.container.inflateMenu(R.menu.menu_search)
+        val menu = binding.toolbar.container.menu
+        val search = menu.findItem(R.id.action_search)
+        val searchView = search.actionView as SearchView
+        searchView.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                firstLoadData()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let {
+                    viewModel.query = it
+                }
+                return true
+            }
+
+        })
+
         /**
          * lifecycleOwner di gunakan untuk menginisialisasikan data binding untuk type yang berbentuk ViewModel
          */
@@ -70,8 +96,7 @@ class HomeFragment : Fragment() {
         binding.listNews.adapter = newsAdapter
 
         viewModel.category.observe(viewLifecycleOwner, Observer {
-            Timber.e(it)
-            viewModel.fetch()
+           firstLoadData()
         })
 
         viewModel.news.observe(viewLifecycleOwner, Observer {
