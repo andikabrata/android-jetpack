@@ -8,6 +8,7 @@ import com.lazday.news.data.news.NewsModel
 import com.lazday.news.data.news.NewsRepository
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
+import kotlin.math.ceil
 
 val homeViewModel = module {
     factory { HomeViewModel(get()) }
@@ -22,6 +23,7 @@ class HomeViewModel(
     val message by lazy { MutableLiveData<String>() }
     val news by lazy { MutableLiveData<NewsModel>() }
     val loading by lazy { MutableLiveData<Boolean>() }
+    val loadingMore by lazy { MutableLiveData<Boolean>() }
 
     init {
         category.value = ""
@@ -29,14 +31,21 @@ class HomeViewModel(
     }
 
     var query = ""
+    var page = 1
+    var total = 1
 
     fun fetch() {
-        loading.value = true
+        if (page > 1) loadingMore.value = true
+        else loading.value = true
         viewModelScope.launch {
             try {
-                val response = repository.fetch(category.value!!, query, 1)
+                val response = repository.fetch(category.value!!, query, page)
                 news.value = response
+                val totalResults: Double = response.totalResults / 20.0
+                total = ceil(totalResults).toInt()
+                page++
                 loading.value = false
+                loadingMore.value = false
             } catch (e: Exception) {
                 message.value = "Terjadi kesalahan"
             }

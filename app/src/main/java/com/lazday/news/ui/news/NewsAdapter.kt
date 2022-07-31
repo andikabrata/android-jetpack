@@ -40,10 +40,14 @@ class NewsAdapter(
 
     override fun getItemCount() = articles.size
 
-    @SuppressLint("NotifyDataSetChanged")
     fun add(data: List<ArticleModel>) {
-        articles.clear()
         articles.addAll(data)
+        notifyItemRangeInserted((articles.size - data.size), data.size)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun clear() {
+        articles.clear()
         notifyDataSetChanged()
     }
 }

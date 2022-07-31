@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.lazday.news.R
@@ -17,6 +18,7 @@ import com.lazday.news.databinding.FragmentHomeBinding
 import com.lazday.news.ui.detail.DetailActivity
 import com.lazday.news.ui.news.CategoryAdapter
 import com.lazday.news.ui.news.NewsAdapter
+import org.koin.androidx.scope.newScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.dsl.module
 import timber.log.Timber
@@ -30,11 +32,6 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var bindingToolbar: CustomToolbarBinding
     private val viewModel: HomeViewModel by viewModel()
-
-    private fun firstLoadData(){
-        binding.scroll.scrollTo(0, 0)
-        viewModel.fetch()
-    }
 
     private val newsAdapter by lazy {
         NewsAdapter(arrayListOf(), object : NewsAdapter.OnAdapterListener {
@@ -72,7 +69,7 @@ class HomeFragment : Fragment() {
         val menu = binding.toolbar.container.menu
         val search = menu.findItem(R.id.action_search)
         val searchView = search.actionView as SearchView
-        searchView.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 firstLoadData()
                 return true
@@ -96,11 +93,12 @@ class HomeFragment : Fragment() {
         binding.listNews.adapter = newsAdapter
 
         viewModel.category.observe(viewLifecycleOwner, Observer {
-           firstLoadData()
+            firstLoadData()
         })
 
         viewModel.news.observe(viewLifecycleOwner, Observer {
             Timber.e(it.articles.toString())
+            if(viewModel.page == 1) newsAdapter.clear()
             newsAdapter.add(it.articles)
         })
 
@@ -109,5 +107,22 @@ class HomeFragment : Fragment() {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
         })
+
+        /**
+         * tanda ( - ) : merupakan parameter yang tidak di gunakan
+         */
+        binding.scroll.setOnScrollChangeListener { v: NestedScrollView, _, scrollY, _, _ ->
+            if (scrollY == v?.getChildAt(0)!!.measuredHeight - v.measuredHeight){
+                if (viewModel.page <=  viewModel.total && viewModel.loadingMore.value == false)
+                    viewModel.fetch()
+            }
+        }
+    }
+
+    private fun firstLoadData() {
+        binding.scroll.scrollTo(0, 0)
+        viewModel.page = 1
+        viewModel.total = 1
+        viewModel.fetch()
     }
 }
